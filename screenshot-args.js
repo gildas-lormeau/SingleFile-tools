@@ -15,6 +15,7 @@ const args = require("yargs")
 		"browser-user-agent": "Mozilla/5.0 AppleWebKit (KHTML, like Gecko) Chrome Safari",
 		"viewport-height": 1080,
 		"viewport-width": 1920,
+		"page-idle-wait-enabled": true,
 		"page-idle-timeout": 5000,
 		"page-idle-detection-accuracy": .99,
 		"page-load-timeout": 0,
@@ -26,6 +27,7 @@ const args = require("yargs")
 	.boolean("browser-block-ads")
 	.boolean("browser-disable-cookies")
 	.boolean("browser-headless")
+	.boolean("page-idle-wait-enabled")
 	.argv;
 
 delete args["$0"];
@@ -42,9 +44,10 @@ args.pageLoadOptions = {
 	timeout: args.pageLoadTimeout,
 	waitUntil: args.pageLoadWaitUntil
 };
-args.screenshotOptions = {
+args.screenshotOptions = {	
 	idleTimeout: args.pageIdleTimeout,
 	idleDetectionAccuracy: args.pageIdleDetectionAccuracy,
+	idleWaitEnabled: args.pageIdleWaitEnabled,
 	terminationTimeout: args.pageTerminationTimeout,
 	path: args.output
 };
@@ -62,6 +65,7 @@ delete args.pageLoadTimeout;
 delete args.pageLoadWaitUntil;
 delete args.pageIdleTimeout;
 delete args.pageIdleDetectionAccuracy;
+delete args.pageIdleWaitEnabled;
 delete args.pageTerminationTimeout;
 delete args.viewportWidth;
 delete args.viewportHeight;

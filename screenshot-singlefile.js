@@ -4,7 +4,7 @@
 
 const { screenshot, preparePage } = require("./lib/screenshot-core");
 const { getBackEnd, DEFAULT_OPTIONS } = require("single-file");
-const DEFAULT_LOAD_PAGE_OPTIONS = { timeout: 0, waitUntil: "networkidle2" };
+const DEFAULT_LOAD_PAGE_OPTIONS = { timeout: 0 };
 
 getScreenshot(require("./screenshot-args"))
 	.catch(error => console.error(error.message || error)); // eslint-disable-line no-console	
@@ -12,6 +12,8 @@ getScreenshot(require("./screenshot-args"))
 async function getScreenshot(options) {
 	let backEnd;
 	try {
+		options = Object.assign({}, options);
+		options.screenshotOptions.idleWaitEnabled = false;
 		const singleFileOptions = Object.assign({}, DEFAULT_OPTIONS, { loadDeferredImages: false, url: options.url });
 		backEnd = getBackEnd("puppeteer");
 		const browser = await backEnd.initialize(singleFileOptions);
@@ -21,7 +23,7 @@ async function getScreenshot(options) {
 		await page.close();
 		page = await browser.newPage();
 		await preparePage(page, options);
-		await page.setContent(pageData.content, Object.assign({}, DEFAULT_LOAD_PAGE_OPTIONS, options.pageLoadOptions));
+		await page.setContent(pageData.content, Object.assign({}, DEFAULT_LOAD_PAGE_OPTIONS, options.pageLoadOptions, { waitUntil: "load" }));
 		return await screenshot(page, options);
 	} finally {
 		if (backEnd) {
