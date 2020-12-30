@@ -10,8 +10,10 @@ const args = require("yargs")
 		"browser-block-ads": true,
 		"browser-disable-cookies": true,
 		"browser-executable-path": undefined,
+		"browser-header": [],
 		"browser-headless": true,
 		"browser-language": "en-US,en;q=0.9",
+		"browser-proxy-server": undefined,
 		"browser-user-agent": "Mozilla/5.0 AppleWebKit (KHTML, like Gecko) Chrome Safari",
 		"viewport-height": 1080,
 		"viewport-width": 1920,
@@ -26,7 +28,9 @@ const args = require("yargs")
 	.string("browser-executable-path")
 	.boolean("browser-block-ads")
 	.boolean("browser-disable-cookies")
+	.array("browser-header")
 	.boolean("browser-headless")
+	.string("browser-proxy-server")
 	.boolean("page-idle-wait-enabled")
 	.argv;
 
@@ -38,13 +42,21 @@ args.browserOptions = {
 	headless: args.browserHeadless,
 	language: args.browserLanguage,
 	userAgent: args.browserUserAgent,
-	blockAds: args.browserBlockAds
+	blockAds: args.browserBlockAds,
+	proxyServer: args.browserProxyServer,
+	headers: {}
 };
+args.browserHeader.forEach(header => {
+	const matchedHeader = header.match(/^(.*?):(.*)$/);
+	if (matchedHeader.length == 3) {
+		args.browserOptions.headers[matchedHeader[1].trim().toLowerCase()] = matchedHeader[2].trimLeft();
+	}
+});
 args.pageLoadOptions = {
 	timeout: args.pageLoadTimeout,
 	waitUntil: args.pageLoadWaitUntil
 };
-args.screenshotOptions = {	
+args.screenshotOptions = {
 	idleTimeout: args.pageIdleTimeout,
 	idleDetectionAccuracy: args.pageIdleDetectionAccuracy,
 	idleWaitEnabled: args.pageIdleWaitEnabled,
@@ -57,8 +69,10 @@ args.viewPortOptions = {
 };
 delete args.browserDisableCookies;
 delete args.browserExecutablePath;
+delete args.browserHeader;
 delete args.browserHeadless;
 delete args.browserLanguage;
+delete args.browserProxyServer;
 delete args.browserUserAgent;
 delete args.browserBlockAds;
 delete args.pageLoadTimeout;
