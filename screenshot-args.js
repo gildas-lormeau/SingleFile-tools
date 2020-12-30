@@ -31,6 +31,7 @@ const args = require("yargs")
 delete args["$0"];
 delete args["_"];
 args.browserOptions = {
+	disableCookies: args.browserDisableCookies,
 	executablePath: args.browserExecutablePath,
 	headless: args.browserHeadless,
 	language: args.browserLanguage,
@@ -51,6 +52,7 @@ args.viewPortOptions = {
 	width: args.viewportWidth,
 	height: args.viewportHeight,
 };
+delete args.browserDisableCookies;
 delete args.browserExecutablePath;
 delete args.browserHeadless;
 delete args.browserLanguage;
