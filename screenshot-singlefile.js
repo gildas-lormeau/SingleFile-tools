@@ -12,7 +12,7 @@ getScreenshot(require("./screenshot-args"))
 async function getScreenshot(options) {
 	let browser;
 	try {
-		const singleFileOptions = Object.assign({}, DEFAULT_OPTIONS, { browserHeadless: true, loadDeferredImages: false, url: options.url });
+		const singleFileOptions = Object.assign({}, DEFAULT_OPTIONS, { loadDeferredImages: false, url: options.url });
 		browser = await backEnds.puppeteer.initialize(singleFileOptions);
 		let page = await browser.newPage();
 		await preparePage(page, options);
