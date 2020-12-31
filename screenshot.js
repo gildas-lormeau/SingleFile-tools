@@ -4,7 +4,7 @@
 
 const fs = require("fs");
 const puppeteer = require("puppeteer-core");
-const { screenshot, preparePage } = require("./lib/screenshot-core");
+const { screenshot, resizeViewPort, preparePage } = require("./lib/screenshot-core");
 const DEFAULT_LOAD_PAGE_OPTIONS = { timeout: 0, waitUntil: "networkidle2" };
 const DEFAULT_CHARSET = "UTF-8";
 const FILE_STDIN = 0;
@@ -24,6 +24,7 @@ async function getScreenshot(options) {
 		} else {
 			await page.setContent(fs.readFileSync(FILE_STDIN, options.stdinCharset || DEFAULT_CHARSET), pageLoadOptions);
 		}
+		await resizeViewPort(page, options);
 		return await screenshot(page, options);
 	} finally {
 		if (browser) {

@@ -2,7 +2,7 @@
 
 /* global require */
 
-const { screenshot, preparePage } = require("./lib/screenshot-core");
+const { screenshot, preparePage, resizeViewPort } = require("./lib/screenshot-core");
 const { getBackEnd, DEFAULT_OPTIONS } = require("single-file");
 const DEFAULT_LOAD_PAGE_OPTIONS = { timeout: 0 };
 
@@ -14,16 +14,19 @@ async function getScreenshot(options) {
 	try {
 		options = Object.assign({}, options);
 		options.screenshotOptions.idleWaitEnabled = false;
-		const singleFileOptions = Object.assign({}, DEFAULT_OPTIONS, { loadDeferredImages: false, url: options.url });
+		const singleFileOptions = Object.assign({}, DEFAULT_OPTIONS, { loadDeferredImages: false, url: options.url, browserHeadless: options.browserOptions.headless });
 		backEnd = getBackEnd("puppeteer");
 		const browser = await backEnd.initialize(singleFileOptions);
 		let page = await browser.newPage();
 		await preparePage(page, options);
+		await page.goto(options.url, Object.assign({}, DEFAULT_LOAD_PAGE_OPTIONS, options.pageLoadOptions, { waitUntil: "load" }));
+		await resizeViewPort(page, options);
 		const pageData = await backEnd.getPageData(singleFileOptions, page);
 		await page.close();
 		page = await browser.newPage();
 		await preparePage(page, options);
 		await page.setContent(pageData.content, Object.assign({}, DEFAULT_LOAD_PAGE_OPTIONS, options.pageLoadOptions, { waitUntil: "load" }));
+		await resizeViewPort(page, options);
 		return await screenshot(page, options);
 	} finally {
 		if (backEnd) {
